@@ -1,7 +1,7 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  images: { unoptimized: true },
-  transpilePackages: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+  images: { unoptimized: true } 
 };
 
 module.exports = nextConfig;
