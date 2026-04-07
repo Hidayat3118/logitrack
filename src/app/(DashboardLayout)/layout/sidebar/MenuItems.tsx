@@ -1,11 +1,9 @@
 import {
-  IconAperture,
-  IconCopy,
   IconLayoutDashboard,
-  IconLogin,
-  IconMoodHappy,
-  IconTypography,
-  IconUserPlus,
+  IconTruck,
+  IconArrowsTransferUpDown,
+  IconPackage,
+  IconCategory,
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
@@ -24,52 +22,37 @@ const Menuitems = [
   },
   {
     navlabel: true,
-    subheader: "UTILITIES",
+    subheader: "MANAGEMENT BARANG",
   },
   {
     id: uniqueId(),
-    title: "Typography",
-    icon: IconTypography,
-    href: "/utilities/typography",
+    title: "Barang",
+    icon: IconPackage,
+    href: "/utilities/barang",
   },
   {
     id: uniqueId(),
-    title: "Shadow",
-    icon: IconCopy,
-    href: "/utilities/shadow",
+    title: "Transaksi",
+    icon: IconArrowsTransferUpDown,
+    href: "/utilities/transaksi",
   },
-  // {
-  //   navlabel: true,
-  //   subheader: "AUTH",
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: "Login",
-  //   icon: IconLogin,
-  //   href: "/authentication/login",
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: "Register",
-  //   icon: IconUserPlus,
-  //   href: "/authentication/register",
-  // },
+  {
+    id: uniqueId(),
+    title: "Kategori",
+    icon: IconCategory,
+    href: "/utilities/kategori",
+  },
   {
     navlabel: true,
-    subheader: " EXTRA",
+    subheader: "MANAGEMENT VENDOR",
   },
   {
     id: uniqueId(),
-    title: "Icons",
-    icon: IconMoodHappy,
-    href: "/icons",
+    title: "Supplier",
+    icon: IconTruck,
+    href: "/utilities/supplier",
   },
-  {
-    id: uniqueId(),
-    title: "Sample Page",
-    icon: IconAperture,
-    href: "/sample-page",
-  },
+  
 
 ];
 

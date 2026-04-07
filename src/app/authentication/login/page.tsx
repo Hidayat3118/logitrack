@@ -38,14 +38,27 @@ const Login2 = () => {
               xs: 12,
               sm: 12,
               lg: 4,
-              xl: 3
-            }}>
+              xl: 3,
+            }}
+          >
             <Card
               elevation={9}
               sx={{ p: 4, zIndex: 1, width: "100%", maxWidth: "500px" }}
             >
-              <Box display="flex" alignItems="center" justifyContent="center">
-                <Logo />
+               <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 1,
+                  py: 2,
+                  textDecoration: "none",
+                }}
+              >
+                <img src="/icon.svg" width={46} height={46} />
+                <Typography fontSize={24} fontWeight={600}>
+                  LogiTrack
+                </Typography>
               </Box>
               <AuthLogin
                 subtext={
@@ -55,7 +68,7 @@ const Login2 = () => {
                     color="textSecondary"
                     mb={1}
                   >
-                    Your Social Campaigns
+                   Selamat datang di LogiTrack
                   </Typography>
                 }
                 subtitle={
@@ -70,18 +83,19 @@ const Login2 = () => {
                       variant="h6"
                       fontWeight="500"
                     >
-                      New to Modernize?
+                      Lupa kata Password?
                     </Typography>
                     <Typography
                       component={Link}
-                      href="/authentication/register"
+                      variant="h6"
+                      href="/authentication/forgotPassword"
                       fontWeight="500"
                       sx={{
                         textDecoration: "none",
                         color: "primary.main",
                       }}
                     >
-                      Create an account
+                      Reset di sini
                     </Typography>
                   </Stack>
                 }

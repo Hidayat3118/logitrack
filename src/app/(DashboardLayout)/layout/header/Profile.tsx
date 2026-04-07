@@ -16,19 +16,21 @@ import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 // notif
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
+  const [pageLoading, setPageLoading] = useState<boolean>(false);
+  const { user, loading } = useAuth();
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
   };
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const initial = user?.email?.charAt(0).toUpperCase() ?? "U";
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -41,7 +43,7 @@ const Profile = () => {
       console.log("logout gagal", error);
       toast.error("logout gagal");
     } finally {
-      setLoading(true);
+      setPageLoading(true);
     }
   };
 
@@ -61,13 +63,15 @@ const Profile = () => {
         onClick={handleClick2}
       >
         <Avatar
-          src="/images/profile/profil.jpg"
-          alt="image"
           sx={{
-            width: 35,
-            height: 35,
+            width: 45,
+            height: 45,
+            bgcolor: "#2F6DB3",
+            color: "#fff",
           }}
-        />
+        >
+          {initial}
+        </Avatar>
       </IconButton>
       {/* ------------------------------------------- */}
       {/* Message Dropdown */}
