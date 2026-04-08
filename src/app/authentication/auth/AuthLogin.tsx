@@ -27,9 +27,9 @@ const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
     email: "",
     password: "",
   });
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter()
+  const router = useRouter();
   // handle login
   const handleLogin = async () => {
     setLoading(true);
@@ -39,22 +39,35 @@ const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
       toast.success("Berhasi login");
       router.push("/");
     } catch (err: any) {
-      // Pesan error yang lebih ramah
       switch (err.code) {
-        case "auth/user-not-found":
+        case "auth/user-not-found": // legacy, jarang muncul lagi
           setError("Email tidak ditemukan");
+          toast.error("Email tidak ditemukan");
           break;
-        case "auth/wrong-password":
+
+        case "auth/wrong-password": // legacy, jarang muncul lagi
           setError("Password salah");
+          toast.error("Password salah");
           break;
+
+        case "auth/invalid-credential": // ✅ ini yang sekarang dipakai Firebase
+          setError("Email atau password salah");
+          toast.error("Email atau password salah");
+          break;
+
         case "auth/invalid-email":
           setError("Format email tidak valid");
+          toast.error("Format email tidak valid");
           break;
+
         case "auth/too-many-requests":
           setError("Terlalu banyak percobaan, coba lagi nanti");
+          toast.error("Terlalu banyak percobaan, coba lagi nanti");
           break;
+
         default:
           setError("Login gagal, coba lagi");
+          toast.error("Login gagal, coba lagi");
       }
       return null;
     } finally {
@@ -128,7 +141,6 @@ const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
               label="Remeber this Device"
             />
           </FormGroup>
-        
         </Stack>
       </Stack>
 
@@ -139,8 +151,8 @@ const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
           size="large"
           fullWidth
           onClick={handleLogin}
-          disabled={loading} 
-          type="button"             
+          disabled={loading}
+          type="button"
         >
           {loading ? "Loading..." : "Sign In"}
         </Button>
