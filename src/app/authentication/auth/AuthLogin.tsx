@@ -7,7 +7,11 @@ import {
   Button,
   Stack,
   Checkbox,
+  TextField,
+  InputAdornment,
+  IconButton
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Link from "next/link";
 import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
 import { LoginForm } from "@/types/forms";
@@ -29,7 +33,14 @@ const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const router = useRouter();
+
+  const handleClickShowPassword = () => setShowPassword((prev) => !prev);
+  const handleMouseDownPassword = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+  };
+
   // handle login
   const handleLogin = async () => {
     setLoading(true);
@@ -91,17 +102,11 @@ const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
 
       <Stack>
         <Box>
-          <Typography
-            variant="subtitle1"
-            fontWeight={600}
-            component="label"
-            htmlFor="username"
-            mb="5px"
-          >
-            Email
-          </Typography>
-          <CustomTextField
+          <TextField
+            label="Email"
             variant="outlined"
+            type="email"
+            placeholder="Contoh: user@example.com"
             fullWidth
             value={form.email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -110,23 +115,29 @@ const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
           />
         </Box>
         <Box mt="25px">
-          <Typography
-            variant="subtitle1"
-            fontWeight={600}
-            component="label"
-            htmlFor="password"
-            mb="5px"
-          >
-            Password
-          </Typography>
-          <CustomTextField
-            type="password"
+          <TextField
+            label="Password"
+            type={showPassword ? "text" : "password"}
             variant="outlined"
             fullWidth
             value={form.password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setForm({ ...form, password: e.target.value })
             }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         </Box>
         <Stack

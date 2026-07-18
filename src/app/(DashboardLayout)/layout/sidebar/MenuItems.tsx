@@ -20,6 +20,20 @@ const Menuitems = [
     icon: IconLayoutDashboard,
     href: "/",
   },
+
+// inventaris
+
+{
+    navlabel: true,
+    subheader: "MANAGEMENT INVENTARIS",
+  },
+  {
+    id: uniqueId(),
+    title: "Inventaris",
+    icon: IconPackage,
+    href: "/utilities/inventaris",
+  },
+
   {
     navlabel: true,
     subheader: "MANAGEMENT BARANG",
@@ -32,7 +46,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Transaksi",
+    title: "Aktivitas Barang",
     icon: IconArrowsTransferUpDown,
     href: "/utilities/transaksi",
   },
