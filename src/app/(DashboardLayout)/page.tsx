@@ -230,7 +230,7 @@ const Dashboard = () => {
   };
 
   return (
-    <PageContainer title="Dashboard" description="Dashboard LogiTrack">
+    <PageContainer title="Dashboard" description="Dashboard si-aslap">
       <Box>
         <Grid container spacing={3}>
 

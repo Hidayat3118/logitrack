@@ -25,7 +25,14 @@ import {
   Typography,
   Chip,
 } from "@mui/material";
-import { Add, Close, DeleteOutline, EditOutlined, Search } from "@mui/icons-material";
+import {
+  Add,
+  Close,
+  DeleteOutline,
+  EditOutlined,
+  PhotoCamera,
+  Search,
+} from "@mui/icons-material";
 import {
   addDoc,
   collection,
@@ -47,6 +54,8 @@ type InventarisItem = {
   satuan: string;
   kondisi: string;
   keterangan: string;
+  imageUrl?: string;
+  imageName?: string;
 };
 
 type InventarisForm = {
@@ -68,13 +77,18 @@ const emptyForm: InventarisForm = {
 // warna
 
 const statusConfig: Record<string, { label: string; color: any }> = {
-  Baik: { label: 'Baik', color: 'success' },
-  'Rusak Ringan': { label: 'Rusak Ringan', color: 'warning' },
-  'Rusak Berat': { label: 'Rusak Berat', color: 'error' },
-  Dipinjam: { label: 'Dipinjam', color: 'info' },
+  Baik: { label: "Baik", color: "success" },
+  "Rusak Ringan": { label: "Rusak Ringan", color: "warning" },
+  "Rusak Berat": { label: "Rusak Berat", color: "error" },
+  Dipinjam: { label: "Dipinjam", color: "info" },
 };
 
 const InventarisPage = () => {
+  // state uplaod gambar
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState("");
+  const [imageName, setImageName] = useState("");
+
   const [items, setItems] = useState<InventarisItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -82,6 +96,38 @@ const InventarisPage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<InventarisForm>(emptyForm);
   const [search, setSearch] = useState("");
+  const [filterKondisi, setFilterKondisi] = useState("Semua");
+  const [selectedImage, setSelectedImage] = useState<{
+    src: string;
+    name: string;
+  } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<InventarisItem | null>(null);
+
+  //   reset form
+  const resetForm = () => {
+    setForm({ ...emptyForm });
+    setEditingId(null);
+    setImage(null);
+    setPreview("");
+    setImageName("");
+  };
+
+  //   pilih gambar
+  const handleSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result as string;
+      setImage(file);
+      setPreview(result);
+      setImageName(file.name);
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  };
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -105,11 +151,6 @@ const InventarisPage = () => {
     return () => unsubscribe();
   }, []);
 
-  const resetForm = () => {
-    setForm({ ...emptyForm });
-    setEditingId(null);
-  };
-
   const handleOpenAdd = () => {
     resetForm();
     setDialogOpen(true);
@@ -124,12 +165,31 @@ const InventarisPage = () => {
       kondisi: item.kondisi,
       keterangan: item.keterangan,
     });
+    setImage(null);
+    setPreview(item.imageUrl || "");
+    setImageName(item.imageName || "");
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     resetForm();
+  };
+
+  const handleOpenImagePreview = (src: string, name: string) => {
+    setSelectedImage({ src, name });
+  };
+
+  const handleCloseImagePreview = () => {
+    setSelectedImage(null);
+  };
+
+  const handleOpenDeleteConfirm = (item: InventarisItem) => {
+    setDeleteTarget(item);
+  };
+
+  const handleCloseDeleteConfirm = () => {
+    setDeleteTarget(null);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -156,6 +216,8 @@ const InventarisPage = () => {
           satuan: form.satuan.trim(),
           kondisi: form.kondisi,
           keterangan: form.keterangan.trim(),
+          imageUrl: preview || null,
+          imageName: imageName || null,
           updatedAt: serverTimestamp(),
         });
         toast.success("Inventaris berhasil diperbarui");
@@ -166,6 +228,8 @@ const InventarisPage = () => {
           satuan: form.satuan.trim(),
           kondisi: form.kondisi,
           keterangan: form.keterangan.trim(),
+          imageUrl: preview || null,
+          imageName: imageName || null,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
@@ -191,9 +255,14 @@ const InventarisPage = () => {
     }
   };
 
-  const filteredItems = items.filter((item) =>
-    item.namaBarang.toLowerCase().includes(search.toLowerCase().trim())
-  );
+  const filteredItems = items.filter((item) => {
+    const matchSearch = item.namaBarang
+      .toLowerCase()
+      .includes(search.toLowerCase().trim());
+    const matchKondisi =
+      filterKondisi === "Semua" || item.kondisi === filterKondisi;
+    return matchSearch && matchKondisi;
+  });
 
   return (
     <PageContainer
@@ -213,13 +282,17 @@ const InventarisPage = () => {
             </Button>
           }
         >
-            {/* serch */}
-          <Box mb={2}>
+          {/* search & filter */}
+          <Box
+            mb={2}
+            display="flex"
+            flexDirection={{ xs: "column", sm: "row" }}
+            gap={2}
+          >
             <TextField
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nama barang..."
-             
               fullWidth
               sx={{ maxWidth: { sm: 320 } }}
               InputProps={{
@@ -230,6 +303,22 @@ const InventarisPage = () => {
                 ),
               }}
             />
+            {/* filter kondisi */}
+            <FormControl sx={{ maxWidth: { sm: 200 } }} fullWidth>
+              <InputLabel id="filter-kondisi-label">Kondisi</InputLabel>
+              <Select
+                labelId="filter-kondisi-label"
+                value={filterKondisi}
+                label="Kondisi"
+                onChange={(e) => setFilterKondisi(e.target.value)}
+              >
+                <MenuItem value="Semua">Semua</MenuItem>
+                <MenuItem value="Baik">Baik</MenuItem>
+                <MenuItem value="Rusak Ringan">Rusak Ringan</MenuItem>
+                <MenuItem value="Rusak Berat">Rusak Berat</MenuItem>
+                <MenuItem value="Dipinjam">Dipinjam</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
 
           {loading ? (
@@ -241,14 +330,29 @@ const InventarisPage = () => {
               Belum ada data inventaris.
             </Typography>
           ) : filteredItems.length === 0 ? (
-            <Typography color="text.secondary">
-              Tidak ada barang yang cocok dengan pencarian "{search}".
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                py: 6,
+                textAlign: "center",
+              }}
+            >
+              <Typography color="text.secondary">
+                Data tidak ditemukan.
+              </Typography>
+            </Box>
           ) : (
             <Box sx={{ overflow: "auto" }}>
               <Table sx={{ minWidth: 800 }}>
                 <TableHead>
                   <TableRow>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Foto
+                      </Typography>
+                    </TableCell>
                     <TableCell>
                       <Typography variant="subtitle2" fontWeight={600}>
                         Nama Barang
@@ -284,16 +388,72 @@ const InventarisPage = () => {
                 <TableBody>
                   {filteredItems.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell>{item.namaBarang}</TableCell>
+                      <TableCell>
+                        {item.imageUrl ? (
+                          <Box
+                            component="button"
+                            onClick={() =>
+                              handleOpenImagePreview(item.imageUrl || "", item.namaBarang)
+                            }
+                            sx={{
+                              width: 56,
+                              height: 56,
+                              borderRadius: 1.5,
+                              overflow: "hidden",
+                              border: "1px solid",
+                              borderColor: "divider",
+                              flexShrink: 0,
+                              p: 0,
+                              cursor: "pointer",
+                              bgcolor: "transparent",
+                              display: "block",
+                            }}
+                          >
+                            <img
+                              src={item.imageUrl}
+                              alt={item.namaBarang}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                display: "block",
+                              }}
+                            />
+                          </Box>
+                        ) : (
+                          <Box
+                            sx={{
+                              width: 56,
+                              height: 56,
+                              borderRadius: 1.5,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              bgcolor: "grey.100",
+                              color: "text.secondary",
+                              fontSize: 12,
+                              fontWeight: 600,
+                              border: "1px dashed",
+                              borderColor: "divider",
+                              flexShrink: 0,
+                            }}
+                          >
+                            Foto
+                          </Box>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight={600}>{item.namaBarang}</Typography>
+                      </TableCell>
                       <TableCell>{item.jumlahBarang}</TableCell>
                       <TableCell>{item.satuan}</TableCell>
                       <TableCell sx={{ py: 2 }}>
-                            <Chip
-                              label={statusConfig[item.kondisi].label}
-                              color={statusConfig[item.kondisi].color}
-                              sx={{ fontSize: '13px', height: '28px' }}
-                            />
-                          </TableCell>
+                        <Chip
+                          label={statusConfig[item.kondisi].label}
+                          color={statusConfig[item.kondisi].color}
+                          sx={{ fontSize: "13px", height: "28px" }}
+                        />
+                      </TableCell>
                       <TableCell>{item.keterangan || "-"}</TableCell>
                       <TableCell align="right">
                         <Stack
@@ -310,7 +470,7 @@ const InventarisPage = () => {
                           </IconButton>
                           <IconButton
                             color="error"
-                            onClick={() => handleDelete(item.id)}
+                            onClick={() => handleOpenDeleteConfirm(item)}
                             aria-label="delete"
                           >
                             <DeleteOutline />
@@ -327,6 +487,88 @@ const InventarisPage = () => {
       </Stack>
 
       <Dialog
+        open={!!deleteTarget}
+        onClose={handleCloseDeleteConfirm}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Konfirmasi Hapus</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Apakah kamu yakin ingin menghapus inventaris
+            <strong> {deleteTarget?.namaBarang}</strong>?
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={handleCloseDeleteConfirm} variant="outlined">
+            Batal
+          </Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={async () => {
+              if (!deleteTarget) return;
+              await handleDelete(deleteTarget.id);
+              handleCloseDeleteConfirm();
+            }}
+          >
+            Hapus
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={!!selectedImage}
+        onClose={handleCloseImagePreview}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h6">Preview Foto</Typography>
+            <IconButton onClick={handleCloseImagePreview}>
+              <Close />
+            </IconButton>
+          </Stack>
+        </DialogTitle>
+        <DialogContent>
+          {selectedImage && (
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                {selectedImage.name}
+              </Typography>
+              <Box
+                sx={{
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  border: "1px solid",
+                  borderColor: "divider",
+                  display: "inline-flex",
+                  maxWidth: "100%",
+                  maxHeight: 480,
+                }}
+              >
+                <img
+                  src={selectedImage.src}
+                  alt="Preview gambar besar"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: 480,
+                    objectFit: "contain",
+                    display: "block",
+                  }}
+                />
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
         open={dialogOpen}
         onClose={handleCloseDialog}
         maxWidth="sm"
@@ -341,7 +583,7 @@ const InventarisPage = () => {
             <Typography variant="h6">
               {editingId ? "Edit Inventaris" : "Tambah Inventaris"}
             </Typography>
-            <IconButton onClick={handleCloseDialog} >
+            <IconButton onClick={handleCloseDialog}>
               <Close />
             </IconButton>
           </Stack>
@@ -362,8 +604,66 @@ const InventarisPage = () => {
               }
               required
               fullWidth
-              
             />
+
+            <Box
+              sx={{
+                border: "1px dashed",
+                borderColor: "divider",
+                borderRadius: 2,
+                p: 2,
+                bgcolor: "grey.50",
+              }}
+            >
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                Gambar Barang
+              </Typography>
+
+              <Button
+                variant="outlined"
+                component="label"
+                startIcon={<PhotoCamera />}
+                fullWidth
+                sx={{
+                  height: 56,
+                  justifyContent: "flex-start",
+                  textTransform: "none",
+                  borderStyle: "dashed",
+                  borderWidth: 2,
+                  mb: preview ? 2 : 0,
+                }}
+              >
+                {imageName || "Pilih Gambar"}
+                <input
+                  hidden
+                  accept="image/*"
+                  type="file"
+                  onChange={handleSelectImage}
+                />
+              </Button>
+
+              {preview && (
+                <Box
+                  sx={{
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    border: "1px solid",
+                    borderColor: "divider",
+                  }}
+                >
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    style={{
+                      width: "100%",
+                      height: 220,
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
+                </Box>
+              )}
+            </Box>
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField
@@ -375,7 +675,6 @@ const InventarisPage = () => {
                 }
                 required
                 fullWidth
-                
                 inputProps={{ min: 0 }}
               />
 
@@ -387,12 +686,11 @@ const InventarisPage = () => {
                 }
                 required
                 fullWidth
-                
                 placeholder="contoh: unit, box, pcs"
               />
             </Stack>
 
-            <FormControl fullWidth >
+            <FormControl fullWidth>
               <InputLabel id="kondisi-label">Kondisi</InputLabel>
               <Select
                 labelId="kondisi-label"
@@ -418,7 +716,6 @@ const InventarisPage = () => {
               fullWidth
               multiline
               rows={3}
-              
               placeholder="Opsional"
             />
           </Box>

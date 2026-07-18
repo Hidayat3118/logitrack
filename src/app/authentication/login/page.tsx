@@ -55,9 +55,9 @@ const Login2 = () => {
                   textDecoration: "none",
                 }}
               >
-                <img src="/icon.svg" width={46} height={46} />
+                <img src="/mbg.svg" width={46} height={46} />
                 <Typography fontSize={24} fontWeight={600}>
-                  LogiTrack
+                  si-aslap
                 </Typography>
               </Box>
               <AuthLogin
@@ -68,7 +68,7 @@ const Login2 = () => {
                     color="textSecondary"
                     mb={1}
                   >
-                   Selamat datang di LogiTrack
+                   Selamat datang di si-aslap
                   </Typography>
                 }
                 subtitle={

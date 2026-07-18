@@ -4,10 +4,12 @@ import Providers from "./provider";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "LogiTrack",
+  title: "si-aslap",
   description: "Dashboard Logistik",
   icons: {
-    icon: "/icon.svg",
+    icon: "/mbg.svg",
+    shortcut: "/mbg.png",
+    apple: "/mbg.png",
   },
 };
 

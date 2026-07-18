@@ -82,9 +82,9 @@ const SidebarItems = () => {
             textDecoration: "none",
           }}
         >
-          <img src="/icon.svg" width={36} height={36} />
+          <img src="/mbg.svg" width={36} height={36} />
           <Typography fontSize={16} fontWeight={600}>
-            LogiTrack
+            si-aslap
           </Typography>
         </Box>
 

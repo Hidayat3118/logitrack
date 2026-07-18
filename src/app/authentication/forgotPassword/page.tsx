@@ -54,7 +54,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <PageContainer title="Lupa Password" description="Reset password LogiTrack">
+    <PageContainer title="Lupa Password" description="Reset password si-aslap">
       <Box
         sx={{
           position: "relative",
@@ -97,9 +97,9 @@ const ForgotPassword = () => {
                   textDecoration: "none",
                 }}
               >
-                <img src="/icon.svg" width={46} height={46} />
+                <img src="/mbg.svg" width={46} height={46} />
                 <Typography fontSize={24} fontWeight={600}>
-                  LogiTrack
+                  si-aslap
                 </Typography>
               </Box>
 
