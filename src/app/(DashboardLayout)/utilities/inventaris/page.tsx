@@ -97,6 +97,8 @@ const InventarisPage = () => {
   const [form, setForm] = useState<InventarisForm>(emptyForm);
   const [search, setSearch] = useState("");
   const [filterKondisi, setFilterKondisi] = useState("Semua");
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 5;
   const [selectedImage, setSelectedImage] = useState<{
     src: string;
     name: string;
@@ -264,6 +266,17 @@ const InventarisPage = () => {
     return matchSearch && matchKondisi;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / rowsPerPage));
+  const safePage = Math.min(page, totalPages);
+  const paginatedItems = filteredItems.slice(
+    (safePage - 1) * rowsPerPage,
+    safePage * rowsPerPage,
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, filterKondisi]);
+
   return (
     <PageContainer
       title="Inventaris"
@@ -348,6 +361,11 @@ const InventarisPage = () => {
               <Table sx={{ minWidth: 800 }}>
                 <TableHead>
                   <TableRow>
+                    <TableCell width={60}>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        No
+                      </Typography>
+                    </TableCell>
                     <TableCell>
                       <Typography variant="subtitle2" fontWeight={600}>
                         Foto
@@ -386,8 +404,13 @@ const InventarisPage = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredItems.map((item) => (
+                  {paginatedItems.map((item, index) => (
                     <TableRow key={item.id}>
+                      <TableCell>
+                        <Typography fontWeight={600}>
+                          {(safePage - 1) * rowsPerPage + index + 1}
+                        </Typography>
+                      </TableCell>
                       <TableCell>
                         {item.imageUrl ? (
                           <Box
@@ -481,6 +504,39 @@ const InventarisPage = () => {
                   ))}
                 </TableBody>
               </Table>
+            </Box>
+          )}
+
+          {filteredItems.length > 0 && (
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mt={2}
+              gap={2}
+              flexWrap="wrap"
+            >
+              <Typography variant="body2" color="text.secondary">
+                Menampilkan {paginatedItems.length} dari {filteredItems.length} data
+              </Typography>
+              <Stack direction="row" spacing={1}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                  disabled={safePage === 1}
+                >
+                  Sebelumnya
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={safePage === totalPages}
+                >
+                  Berikutnya
+                </Button>
+              </Stack>
             </Box>
           )}
         </DashboardCard>
