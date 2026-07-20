@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "si-aslap",
-  description: "Dashboard Logistik",
+  description: "Sistem INformasi ASLAP",
   icons: {
     icon: "/mbg.svg",
     shortcut: "/mbg.png",
