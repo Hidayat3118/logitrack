@@ -21,6 +21,13 @@ export const metadata: Metadata = {
     siteName: "si-aslap",
     locale: "id_ID",
     type: "website",
+    images: [
+      {
+        url: "/mbg.png", // ganti dengan banner 1200x630px kalau ada, taruh di /public
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   twitter: {
     card: "summary",
@@ -38,7 +45,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>{children}</Providers>
-        <Toaster position="top-right" richColors/>
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );
