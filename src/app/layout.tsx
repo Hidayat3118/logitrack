@@ -4,12 +4,28 @@ import Providers from "./provider";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "si-aslap",
-  description: "Sistem INformasi ASLAP",
+  metadataBase: new URL("https://logitrack-red.vercel.app"),
+  title: {
+    default: "si-aslap",
+    template: "%s - si-aslap",
+  },
+  description: "Sistem Informasi ASLAP",
   icons: {
     icon: "/mbg.svg",
     shortcut: "/mbg.png",
     apple: "/mbg.png",
+  },
+  openGraph: {
+    title: "si-aslap",
+    description: "Sistem Informasi ASLAP",
+    siteName: "si-aslap",
+    locale: "id_ID",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "si-aslap",
+    description: "Sistem Informasi ASLAP",
   },
 };
 
