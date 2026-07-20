@@ -48,7 +48,7 @@ const AuthLogin = ({ title, subtitle, subtext }: LoginType) => {
       await signInWithEmailAndPassword(auth, form.email, form.password);
       console.log("login berhasil");
       toast.success("Berhasi login");
-      router.push("/");
+      router.push("/utilities/inventaris");
     } catch (err: any) {
       switch (err.code) {
         case "auth/user-not-found": // legacy, jarang muncul lagi

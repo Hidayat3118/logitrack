@@ -9,17 +9,17 @@ import {
 import { uniqueId } from "lodash";
 
 const Menuitems = [
-  {
-    navlabel: true,
-    subheader: "HOME",
-  },
+  // {
+  //   navlabel: true,
+  //   subheader: "HOME",
+  // },
 
-  {
-    id: uniqueId(),
-    title: "Dashboard",
-    icon: IconLayoutDashboard,
-    href: "/",
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: "Dashboard",
+  //   icon: IconLayoutDashboard,
+  //   href: "/",
+  // },
 
 // inventaris
 
@@ -38,34 +38,34 @@ const Menuitems = [
     navlabel: true,
     subheader: "MANAGEMENT BARANG",
   },
-  {
-    id: uniqueId(),
-    title: "Barang",
-    icon: IconPackage,
-    href: "/utilities/barang",
-  },
-  {
-    id: uniqueId(),
-    title: "Aktivitas Barang",
-    icon: IconArrowsTransferUpDown,
-    href: "/utilities/transaksi",
-  },
-  {
-    id: uniqueId(),
-    title: "Kategori",
-    icon: IconCategory,
-    href: "/utilities/kategori",
-  },
-  {
-    navlabel: true,
-    subheader: "MANAGEMENT VENDOR",
-  },
-  {
-    id: uniqueId(),
-    title: "Supplier",
-    icon: IconTruck,
-    href: "/utilities/supplier",
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: "Barang",
+  //   icon: IconPackage,
+  //   href: "/utilities/barang",
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Aktivitas Barang",
+  //   icon: IconArrowsTransferUpDown,
+  //   href: "/utilities/transaksi",
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Kategori",
+  //   icon: IconCategory,
+  //   href: "/utilities/kategori",
+  // },
+  // {
+  //   navlabel: true,
+  //   subheader: "MANAGEMENT VENDOR",
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Supplier",
+  //   icon: IconTruck,
+  //   href: "/utilities/supplier",
+  // },
   
 
 ];
